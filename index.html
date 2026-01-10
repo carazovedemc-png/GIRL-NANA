@@ -8,11 +8,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="telegram-auth.js"></script>
-    <script src="data.js"></script>
-    <script src="script.js"></script>
 </head>
 <body>
-    <!-- Хедер -->
+    <!-- Хедер - ИСПРАВЛЕНО -->
     <header class="glass-header">
         <div class="header-content">
             <div class="logo-container">
@@ -80,19 +78,15 @@
             </div>
         </section>
 
-        <!-- Страница бойцов -->
+        <!-- Страница бойцов - ИСПРАВЛЕНО -->
         <section id="fighters-page" class="page">
             <div class="fighters-page">
                 <h2><i class="fas fa-users"></i> Все бойцы EFC™</h2>
                 
                 <div class="filter-buttons">
-                    <button class="filter-btn active" data-category="all">Все</button>
-                    <button class="filter-btn" data-category="no_category">Вне категорий</button>
-                    <button class="filter-btn" data-category="light">Легкий вес</button>
-                    <button class="filter-btn" data-category="middle">Средний вес</button>
-                    <button class="filter-btn" data-category="mma">MMA</button>
-                    <button class="filter-btn" data-category="boxing">Бокс</button>
-                    <button class="filter-btn" data-category="hosting">Хостинг</button>
+                    <button class="filter-btn-main" id="open-filter-modal-btn">
+                        <i class="fas fa-filter"></i> Фильтр
+                    </button>
                 </div>
                 
                 <div class="fighters-container" id="fighters-container">
@@ -213,36 +207,6 @@
             </button>
         </div>
     </nav>
-
-    <!-- Модальные окна -->
-    <div id="tickets-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2><i class="fas fa-ticket-alt"></i> Мои билеты</h2>
-                <button class="modal-close">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div id="tickets-list"></div>
-                <div style="margin-top: 20px;">
-                    <button class="btn-secondary" id="clear-tickets-btn">
-                        <i class="fas fa-trash"></i> Очистить все билеты
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="admin-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2><i class="fas fa-crown"></i> ADMIN PANEL</h2>
-                <button class="modal-close">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div id="admin-content"></div>
-            </div>
-        </div>
-    </div>
 
     <!-- Загрузчик -->
     <div id="loader" class="loader">

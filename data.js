@@ -1,8 +1,8 @@
 // Конфигурация приложения EFC™
 const APP_CONFIG = {
     // Основные настройки
-    appName: "𝙀𝙁𝘾™",
-    logoUrl: "https://sun9-79.userapi.com/s/v1/ig2/Iwgs_SLJiCG0rCQiHerqheqgN93PxCMUoU8j3cto1xpKXjBaQDLpwSL9d4cmtAoAh5UTCClI-QTmUjzo3oQ-UTxv.jpg?quality=95&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,480x480,540x540,640x640,720x720,1024x1024&from=bu&u=vBvlWP12ZXV3-6fRHQiaQfpPXYJBFIu_vV-oThtYMy0&cs=640x0",
+    appName: "EFC™",
+    logoUrl: "https://via.placeholder.com/40/FF6B6B/FFFFFF?text=EFC",
     
     // Ссылка на пользовательское соглашение
     agreementUrl: "https://telegra.ph/POLZOVATELSKOE-SOGLASHENIE-po-ispolzovaniyu-programm-11-06",
@@ -12,19 +12,19 @@ const APP_CONFIG = {
     
     // Администраторы (Telegram ID)
     admins: [
-        1745639675, // Пример ID администратора
+        123456789, // Пример ID администратора
     ],
     
     // Пользователи с доступом к ставкам (18+)
     betsAllowedUsers: [
-        1745639675, // Пример ID
+        123456789, // Пример ID
     ],
     
     // КОНТРАКТЫ БОЙЦОВ
     // Telegram ID: ссылка на контракт
     contracts: {
         // Пример:
-       1745639675: "https://telegra.ph/POLZOVATELSKOE-SOGLASHENIE-po-ispolzovaniyu-programm-11-06",
+        // 123456789: "https://example.com/contract.jpg",
     },
     
     // БОИ БОЙЦОВ
@@ -50,13 +50,14 @@ const APP_CONFIG = {
         "no_category": [
             {
                 id: 1,
-                name: "Рустем Гильманов",
+                name: "Иван Петров",
                 rank: "#1 ВНЕ КАТЕГОРИЙ",
-                record: "21-1-0", // победы-поражения-ничьи
+                record: "21-1-0",
                 photo: "https://via.placeholder.com/100/FF6B6B/FFFFFF?text=IP",
-                sport: "Бокс",
+                sport: "MMA",
                 weight_class: "Тяжелый вес",
-                description: "Чемпион EFC™"
+                description: "Чемпион EFC™",
+                link: "https://example.com/fighter/1" // Добавлено поле link
             },
             {
                 id: 2,
@@ -66,7 +67,8 @@ const APP_CONFIG = {
                 photo: "https://via.placeholder.com/100/4ECDC4/FFFFFF?text=AS",
                 sport: "Бокс",
                 weight_class: "Средний вес",
-                description: "Претендент на титул"
+                description: "Претендент на титул",
+                link: "" // Пустая строка - нет ссылки
             }
         ],
         
@@ -86,7 +88,8 @@ const APP_CONFIG = {
                             photo: "https://via.placeholder.com/100/FFD166/000000?text=DK",
                             sport: "MMA",
                             weight_class: "Легкий вес",
-                            description: "Специалист по грэпплингу"
+                            description: "Специалист по грэпплингу",
+                            link: "https://example.com/fighter/3"
                         }
                     ]
                 },
@@ -102,7 +105,42 @@ const APP_CONFIG = {
                             photo: "https://via.placeholder.com/100/06D6A0/FFFFFF?text=SI",
                             sport: "Бокс",
                             weight_class: "Средний вес",
-                            description: "Нокаутер"
+                            description: "Нокаутер",
+                            link: "https://example.com/fighter/4"
+                        }
+                    ]
+                },
+                {
+                    id: "heavy",
+                    name: "Тяжелый вес",
+                    fighters: [
+                        {
+                            id: 9,
+                            name: "Антон Громов",
+                            rank: "#1 Тяжелый вес",
+                            record: "14-2-0",
+                            photo: "https://via.placeholder.com/100/9D50BB/FFFFFF?text=AG",
+                            sport: "MMA",
+                            weight_class: "Тяжелый вес",
+                            description: "Силовой боец",
+                            link: "https://example.com/fighter/9"
+                        }
+                    ]
+                },
+                {
+                    id: "super_heavy",
+                    name: "Супертяжелый вес",
+                    fighters: [
+                        {
+                            id: 10,
+                            name: "Максим Титан",
+                            rank: "#1 Супертяжелый вес",
+                            record: "10-0-0",
+                            photo: "https://via.placeholder.com/100/FF8E53/FFFFFF?text=MT",
+                            sport: "Борьба",
+                            weight_class: "Супертяжелый вес",
+                            description: "Непобедимый гигант",
+                            link: "https://example.com/fighter/10"
                         }
                     ]
                 }
@@ -122,7 +160,8 @@ const APP_CONFIG = {
                             photo: "https://via.placeholder.com/100/118AB2/FFFFFF?text=MS",
                             sport: "MMA",
                             weight_class: "Полутяжелый вес",
-                            description: "Непобежденный"
+                            description: "Непобежденный",
+                            link: "https://example.com/fighter/5"
                         }
                     ]
                 },
@@ -138,7 +177,8 @@ const APP_CONFIG = {
                             photo: "https://via.placeholder.com/100/9D50BB/FFFFFF?text=AV",
                             sport: "Бокс",
                             weight_class: "Тяжелый вес",
-                            description: "Опытный боксер"
+                            description: "Опытный боксер",
+                            link: "https://example.com/fighter/6"
                         }
                     ]
                 },
@@ -154,7 +194,8 @@ const APP_CONFIG = {
                             photo: "https://via.placeholder.com/100/FF6B6B/FFFFFF?text=IN",
                             sport: "Хостинг",
                             weight_class: "Тренер",
-                            description: "Тренер по хостингу"
+                            description: "Тренер по хостингу",
+                            link: "https://example.com/fighter/7"
                         }
                     ]
                 },
@@ -170,7 +211,8 @@ const APP_CONFIG = {
                             photo: "https://via.placeholder.com/100/FF8E53/FFFFFF?text=OB",
                             sport: "Борьба",
                             weight_class: "Тяжелый вес",
-                            description: "Мастер борьбы"
+                            description: "Мастер борьбы",
+                            link: "https://example.com/fighter/8"
                         }
                     ]
                 }

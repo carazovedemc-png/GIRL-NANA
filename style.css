@@ -56,22 +56,30 @@ body {
     font-size: 1.2rem;
 }
 
-/* Хедер */
+/* Хедер - ИСПРАВЛЕНО */
 .glass-header {
     background: rgba(255, 255, 255, 0.08);
     backdrop-filter: blur(20px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-    padding: 15px 20px;
+    padding: 10px 20px;
     position: sticky;
     top: 0;
     z-index: 100;
+    height: 60px;
+    display: flex;
+    align-items: center;
 }
 
 .header-content {
     display: flex;
     align-items: center;
-    justify-content: center;
     gap: 15px;
+    width: 100%;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
 }
 
 .logo {
@@ -198,6 +206,7 @@ main {
     margin-bottom: 15px;
     border: 1px solid rgba(255, 255, 255, 0.08);
     transition: transform 0.3s, border-color 0.3s;
+    cursor: pointer;
 }
 
 .fight-card:hover, .news-card:hover, .video-card:hover, .fighter-card:hover {
@@ -257,7 +266,7 @@ main {
     margin: 30px 0;
 }
 
-.upcoming-fights h2, .news-section h2, .videos-container h2 {
+.upcoming-fights h2, .news-section h2, .videos-container h2, .fighters-page h2 {
     font-size: 1.5rem;
     margin-bottom: 20px;
     display: flex;
@@ -265,7 +274,7 @@ main {
     gap: 10px;
 }
 
-.upcoming-fights h2 i, .news-section h2 i, .videos-container h2 i {
+.upcoming-fights h2 i, .news-section h2 i, .videos-container h2 i, .fighters-page h2 i {
     color: var(--primary-color);
 }
 
@@ -318,29 +327,35 @@ main {
     font-size: 0.9rem;
 }
 
-/* Бойцы */
+/* Бойцы - ИСПРАВЛЕНО */
+.fighters-page {
+    position: relative;
+}
+
 .filter-buttons {
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
+    justify-content: center;
     margin: 20px 0;
 }
 
-.filter-btn {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: var(--text-secondary);
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-size: 0.9rem;
+.filter-btn-main {
+    background: rgba(255, 107, 107, 0.2);
+    border: 1px solid rgba(255, 107, 107, 0.3);
+    color: var(--primary-color);
+    padding: 12px 30px;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
-.filter-btn.active {
-    background: var(--primary-color);
-    color: white;
-    border-color: var(--primary-color);
+.filter-btn-main:hover {
+    background: rgba(255, 107, 107, 0.3);
+    transform: translateY(-2px);
 }
 
 .fighters-container {
@@ -384,6 +399,7 @@ main {
     font-size: 1.1rem;
     font-weight: 600;
     margin-bottom: 5px;
+    color: white; /* ИСПРАВЛЕНО: белый текст */
 }
 
 .fighter-record {
@@ -426,6 +442,7 @@ main {
 .profile-header h2 {
     font-size: 1.8rem;
     margin-bottom: 5px;
+    color: white; /* ИСПРАВЛЕНО: белый текст */
 }
 
 .status {
@@ -478,6 +495,7 @@ main {
     font-weight: 600;
     font-size: 1rem;
     margin-bottom: 3px;
+    color: white; /* ИСПРАВЛЕНО: белый текст */
 }
 
 .btn-subtitle {
@@ -535,6 +553,7 @@ main {
     display: flex;
     align-items: center;
     gap: 10px;
+    color: white; /* ИСПРАВЛЕНО: белый текст */
 }
 
 .modal-close {
@@ -598,6 +617,117 @@ main {
     gap: 15px;
 }
 
+/* Стили для фильтров */
+.filter-section {
+    margin-bottom: 25px;
+}
+
+.filter-section h3 {
+    color: var(--text-primary);
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+}
+
+.filter-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.filter-option {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.filter-option:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.filter-option.active {
+    background: rgba(255, 107, 107, 0.2);
+    border-color: var(--primary-color);
+}
+
+.filter-option input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--primary-color);
+}
+
+.filter-option label {
+    color: var(--text-primary);
+    cursor: pointer;
+    flex: 1;
+}
+
+/* Модалка "Мои бои" */
+.fights-list-container {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.fight-item {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.fight-item h3 {
+    color: var(--primary-color);
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+}
+
+.fight-details {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.fight-status {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-top: 10px;
+}
+
+.fight-status.upcoming {
+    background: rgba(78, 205, 196, 0.2);
+    color: var(--secondary-color);
+}
+
+.fight-status.completed {
+    background: rgba(255, 107, 107, 0.2);
+    color: var(--primary-color);
+}
+
+.fight-status.cancelled {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-secondary);
+}
+
+.no-fights {
+    text-align: center;
+    color: var(--text-secondary);
+    padding: 40px 20px;
+    font-size: 1.1rem;
+}
+
 /* ИСПРАВЛЕНИЕ НАВИГАЦИИ */
 .glass-nav {
     position: fixed;
@@ -654,12 +784,6 @@ main {
 
 /* Адаптивность */
 @media (max-width: 768px) {
-    .header-content {
-        flex-direction: column;
-        text-align: center;
-        gap: 10px;
-    }
-    
     .app-title {
         font-size: 1.5rem;
     }
@@ -668,12 +792,20 @@ main {
         grid-template-columns: 1fr;
     }
     
-    .news-grid, .videos-grid {
+    .news-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .videos-grid {
         grid-template-columns: 1fr;
     }
     
     .modal-content {
         margin: 10px;
+    }
+    
+    .filter-group {
+        grid-template-columns: 1fr;
     }
 }
 

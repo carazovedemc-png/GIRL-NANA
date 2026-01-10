@@ -1,6 +1,10 @@
 // Основные переменные
 let currentPage = 'home';
 let bannerInterval = null;
+let activeFilters = {
+    weight: [],
+    sport: []
+};
 
 // Инициализация при загрузке
 document.addEventListener('DOMContentLoaded', async function() {
@@ -109,6 +113,8 @@ function loadFighters() {
         APP_CONFIG.fighters.no_category.forEach(fighter => {
             const card = createFighterCard(fighter);
             card.dataset.category = 'no_category';
+            card.dataset.weight = fighter.weight_class.toLowerCase().replace(' ', '_');
+            card.dataset.sport = fighter.sport.toLowerCase();
             container.appendChild(card);
         });
     }
@@ -121,6 +127,8 @@ function loadFighters() {
                 category.fighters.forEach(fighter => {
                     const card = createFighterCard(fighter);
                     card.dataset.category = category.id;
+                    card.dataset.weight = category.id;
+                    card.dataset.sport = fighter.sport.toLowerCase();
                     container.appendChild(card);
                 });
             });
@@ -132,11 +140,16 @@ function loadFighters() {
                 category.fighters.forEach(fighter => {
                     const card = createFighterCard(fighter);
                     card.dataset.category = category.id;
+                    card.dataset.weight = fighter.weight_class.toLowerCase().replace(' ', '_');
+                    card.dataset.sport = category.id;
                     container.appendChild(card);
                 });
             });
         }
     }
+    
+    // Применяем текущие фильтры
+    applyFiltersToFighters();
 }
 
 function createFighterCard(fighter) {
@@ -157,6 +170,15 @@ function createFighterCard(fighter) {
             </div>
         </div>
     `;
+    
+    // Обработчик клика на карточку бойца
+    card.addEventListener('click', function() {
+        if (fighter.link && fighter.link.trim() !== '') {
+            window.open(fighter.link, '_blank');
+        } else {
+            alert('Нет данных о бойце');
+        }
+    });
     
     return card;
 }
@@ -196,17 +218,9 @@ function setupProfileButtons() {
     // Мои билеты
     document.getElementById('my-tickets-btn').addEventListener('click', showMyTickets);
     
-    // Мои бои
+    // Мои бои - ИЗМЕНЕНО
     document.getElementById('my-fights-btn').addEventListener('click', function() {
-        if (APP_CONFIG.contracts[userId]) {
-            if (APP_CONFIG.userFights && APP_CONFIG.userFights[userId]) {
-                showMyFights();
-            } else {
-                alert('У вас пока нет запланированных боев');
-            }
-        } else {
-            alert('У вас нет контракта с EFC™');
-        }
+        showMyFightsModal();
     });
     
     // Анкета/Контракт
@@ -307,21 +321,86 @@ function showMyTickets() {
     });
 }
 
-function showMyFights() {
+// НОВАЯ ФУНКЦИЯ: Показать модальное окно "Мои бои"
+function showMyFightsModal() {
+    const modal = document.createElement('div');
+    modal.className = 'modal active';
+    
     const userId = window.TelegramAuth.getUserId();
     const fights = APP_CONFIG.userFights[userId] || [];
     
-    let message = 'Ваши бои:\n\n';
-    fights.forEach(fight => {
-        message += `🥊 Против: ${fight.opponent}\n`;
-        message += `📅 Дата: ${fight.date} ${fight.time}\n`;
-        message += `📍 Место: ${fight.place}\n`;
-        message += `💰 Гонорар: ${fight.reward} руб.\n`;
-        message += `📊 Статус: ${fight.status === 'upcoming' ? 'Предстоящий' : 
-                                  fight.status === 'completed' ? 'Завершен' : 'Отменен'}\n\n`;
-    });
+    let fightsHTML = '';
+    if (fights.length === 0) {
+        fightsHTML = `
+            <div class="no-fights">
+                <i class="fas fa-fist-raised" style="font-size: 3rem; margin-bottom: 15px; opacity: 0.5;"></i>
+                <p>У вас пока нет запланированных боев</p>
+            </div>
+        `;
+    } else {
+        fightsHTML = '<div class="fights-list-container">';
+        fights.forEach(fight => {
+            let statusText = '';
+            let statusClass = '';
+            
+            if (fight.status === 'upcoming') {
+                statusText = 'Предстоящий';
+                statusClass = 'upcoming';
+            } else if (fight.status === 'completed') {
+                statusText = 'Завершен';
+                statusClass = 'completed';
+            } else {
+                statusText = 'Отменен';
+                statusClass = 'cancelled';
+            }
+            
+            fightsHTML += `
+                <div class="fight-item">
+                    <h3>Против: ${fight.opponent}</h3>
+                    <div class="fight-details">
+                        <i class="far fa-calendar"></i>
+                        <span>${fight.date} ${fight.time}</span>
+                    </div>
+                    <div class="fight-details">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>${fight.place}</span>
+                    </div>
+                    <div class="fight-details">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <span>Гонорар: ${fight.reward} руб.</span>
+                    </div>
+                    <div class="fight-status ${statusClass}">${statusText}</div>
+                </div>
+            `;
+        });
+        fightsHTML += '</div>';
+    }
     
-    alert(message);
+    modal.innerHTML = `
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-fist-raised"></i> Мои бои</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                ${fightsHTML}
+                <div style="margin-top: 20px;">
+                    <button class="btn-secondary" id="close-fights-btn">
+                        <i class="fas fa-times"></i> Закрыть
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Закрытие модалки
+    modal.querySelector('.modal-close').addEventListener('click', () => modal.remove());
+    modal.querySelector('#close-fights-btn').addEventListener('click', () => modal.remove());
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.remove();
+    });
 }
 
 function showApplicationForm() {
@@ -493,31 +572,157 @@ function setupEventListeners() {
         });
     });
     
-    // Фильтр бойцов
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-            
-            const category = this.dataset.category;
-            filterFighters(category);
-        });
-    });
-    
-    // Покупка билетов
+    // Покупка билетов - ИЗМЕНЕНО
     document.addEventListener('click', function(e) {
         if (e.target.classList.contains('buy-ticket-btn')) {
             const fightId = e.target.getAttribute('data-fight-id');
             buyTicket(fightId);
         }
     });
+    
+    // Кнопка фильтра на странице бойцов - НОВОЕ
+    const filterBtn = document.getElementById('open-filter-modal-btn');
+    if (filterBtn) {
+        filterBtn.addEventListener('click', showFilterModal);
+    }
 }
 
-function filterFighters(category) {
+// НОВАЯ ФУНКЦИЯ: Показать модальное окно фильтров
+function showFilterModal() {
+    const modal = document.createElement('div');
+    modal.className = 'modal active';
+    
+    modal.innerHTML = `
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-filter"></i> Фильтр бойцов</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="filter-section">
+                    <h3>Весовая категория</h3>
+                    <div class="filter-group">
+                        <div class="filter-option ${activeFilters.weight.includes('light') ? 'active' : ''}">
+                            <input type="checkbox" id="weight-light" ${activeFilters.weight.includes('light') ? 'checked' : ''}>
+                            <label for="weight-light">Легкий вес</label>
+                        </div>
+                        <div class="filter-option ${activeFilters.weight.includes('middle') ? 'active' : ''}">
+                            <input type="checkbox" id="weight-middle" ${activeFilters.weight.includes('middle') ? 'checked' : ''}>
+                            <label for="weight-middle">Средний вес</label>
+                        </div>
+                        <div class="filter-option ${activeFilters.weight.includes('heavy') ? 'active' : ''}">
+                            <input type="checkbox" id="weight-heavy" ${activeFilters.weight.includes('heavy') ? 'checked' : ''}>
+                            <label for="weight-heavy">Тяжелый вес</label>
+                        </div>
+                        <div class="filter-option ${activeFilters.weight.includes('super_heavy') ? 'active' : ''}">
+                            <input type="checkbox" id="weight-super_heavy" ${activeFilters.weight.includes('super_heavy') ? 'checked' : ''}>
+                            <label for="weight-super_heavy">Супертяжелый вес</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="filter-section">
+                    <h3>Вид спорта</h3>
+                    <div class="filter-group">
+                        <div class="filter-option ${activeFilters.sport.includes('mma') ? 'active' : ''}">
+                            <input type="checkbox" id="sport-mma" ${activeFilters.sport.includes('mma') ? 'checked' : ''}>
+                            <label for="sport-mma">MMA</label>
+                        </div>
+                        <div class="filter-option ${activeFilters.sport.includes('boxing') ? 'active' : ''}">
+                            <input type="checkbox" id="sport-boxing" ${activeFilters.sport.includes('boxing') ? 'checked' : ''}>
+                            <label for="sport-boxing">Бокс</label>
+                        </div>
+                        <div class="filter-option ${activeFilters.sport.includes('wrestling') ? 'active' : ''}">
+                            <input type="checkbox" id="sport-wrestling" ${activeFilters.sport.includes('wrestling') ? 'checked' : ''}>
+                            <label for="sport-wrestling">Борьба</label>
+                        </div>
+                        <div class="filter-option ${activeFilters.sport.includes('hosting') ? 'active' : ''}">
+                            <input type="checkbox" id="sport-hosting" ${activeFilters.sport.includes('hosting') ? 'checked' : ''}>
+                            <label for="sport-hosting">Хостинг</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 25px; display: flex; gap: 10px;">
+                    <button class="btn-primary" id="apply-filters-btn">
+                        <i class="fas fa-check"></i> Применить
+                    </button>
+                    <button class="btn-secondary" id="reset-filters-btn">
+                        <i class="fas fa-times"></i> Сбросить
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Обработчики чекбоксов
+    modal.querySelectorAll('.filter-option').forEach(option => {
+        option.addEventListener('click', function(e) {
+            if (e.target.type !== 'checkbox') {
+                const checkbox = this.querySelector('input[type="checkbox"]');
+                checkbox.checked = !checkbox.checked;
+                this.classList.toggle('active');
+            }
+        });
+    });
+    
+    // Применить фильтры
+    modal.querySelector('#apply-filters-btn').addEventListener('click', function() {
+        const selectedWeights = [];
+        const selectedSports = [];
+        
+        modal.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
+            if (checkbox.id.startsWith('weight-')) {
+                selectedWeights.push(checkbox.id.replace('weight-', ''));
+            } else if (checkbox.id.startsWith('sport-')) {
+                selectedSports.push(checkbox.id.replace('sport-', ''));
+            }
+        });
+        
+        activeFilters.weight = selectedWeights;
+        activeFilters.sport = selectedSports;
+        
+        applyFiltersToFighters();
+        modal.remove();
+    });
+    
+    // Сбросить фильтры
+    modal.querySelector('#reset-filters-btn').addEventListener('click', function() {
+        activeFilters.weight = [];
+        activeFilters.sport = [];
+        
+        modal.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+            checkbox.checked = false;
+        });
+        
+        modal.querySelectorAll('.filter-option').forEach(option => {
+            option.classList.remove('active');
+        });
+        
+        applyFiltersToFighters();
+    });
+    
+    // Закрытие модалки
+    modal.querySelector('.modal-close').addEventListener('click', () => modal.remove());
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.remove();
+    });
+}
+
+// НОВАЯ ФУНКЦИЯ: Применить фильтры к бойцам
+function applyFiltersToFighters() {
     const fighters = document.querySelectorAll('.fighter-card');
     
     fighters.forEach(fighter => {
-        if (category === 'all' || fighter.dataset.category === category) {
+        const fighterWeight = fighter.dataset.weight;
+        const fighterSport = fighter.dataset.sport;
+        
+        let weightMatch = activeFilters.weight.length === 0 || activeFilters.weight.includes(fighterWeight);
+        let sportMatch = activeFilters.sport.length === 0 || activeFilters.sport.includes(fighterSport);
+        
+        if (weightMatch && sportMatch) {
             fighter.style.display = 'flex';
         } else {
             fighter.style.display = 'none';
@@ -525,26 +730,16 @@ function filterFighters(category) {
     });
 }
 
+// ИЗМЕНЕННАЯ ФУНКЦИЯ: Покупка билета с переходом в Telegram
 function buyTicket(fightId) {
     const fight = APP_CONFIG.upcomingFights.find(f => f.id == fightId);
     if (!fight) return;
     
-    const ticket = {
-        id: Date.now(),
-        fightId: fightId,
-        fighters: fight.fighters,
-        date: fight.date,
-        time: fight.time,
-        place: fight.place,
-        price: fight.ticketPrice,
-        purchaseDate: new Date().toLocaleDateString('ru-RU')
-    };
+    const message = `🎫 ХОЧУ КУПИТЬ БИЛЕТ EFC™\n\n🥊 Бой: ${fight.fighters.join(' vs ')}\n📅 Дата: ${fight.date}\n🕒 Время: ${fight.time}\n📍 Место: ${fight.place}\n💰 Цена: ${fight.ticketPrice} руб.\n\nПрошу связаться со мной для покупки билета!`;
+    const encodedMessage = encodeURIComponent(message);
+    const telegramUrl = `https://t.me/EDEM_CR?text=${encodedMessage}`;
     
-    const tickets = JSON.parse(localStorage.getItem('tickets') || '[]');
-    tickets.push(ticket);
-    localStorage.setItem('tickets', JSON.stringify(tickets));
-    
-    alert(`✅ Билет куплен! ${fight.ticketPrice} руб.`);
+    window.open(telegramUrl, '_blank');
 }
 
 function switchPage(page) {
