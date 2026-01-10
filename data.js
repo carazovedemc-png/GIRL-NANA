@@ -1,8 +1,8 @@
 // Конфигурация приложения EFC™
 const APP_CONFIG = {
     // Основные настройки
-    appName: "EFC™",
-    logoUrl: "https://via.placeholder.com/40/FF6B6B/FFFFFF?text=EFC",
+    appName: "𝙀𝙁𝘾™",
+    logoUrl: "https://sun9-79.userapi.com/s/v1/ig2/Iwgs_SLJiCG0rCQiHerqheqgN93PxCMUoU8j3cto1xpKXjBaQDLpwSL9d4cmtAoAh5UTCClI-QTmUjzo3oQ-UTxv.jpg?quality=95&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,480x480,540x540,640x640,720x720,1024x1024&from=bu&u=vBvlWP12ZXV3-6fRHQiaQfpPXYJBFIu_vV-oThtYMy0&cs=640x0",
     
     // Ссылка на пользовательское соглашение
     agreementUrl: "https://telegra.ph/POLZOVATELSKOE-SOGLASHENIE-po-ispolzovaniyu-programm-11-06",
@@ -23,25 +23,25 @@ const APP_CONFIG = {
     // КОНТРАКТЫ БОЙЦОВ
     // Telegram ID: ссылка на контракт
     contracts: {
-        // Пример:
-        // 123456789: "https://example.com/contract.jpg",
+         Пример:
+         123456789: "https://telegra.ph/CONTRACT-01-09",
     },
     
     // БОИ БОЙЦОВ
     // Telegram ID: массив боев
     userFights: {
         // Пример:
-        // 123456789: [
-        //     {
-        //         id: 1,
-        //         opponent: "Иван Иванов",
-        //         date: "15.12.2024",
-        //         time: "18:00",
-        //         place: "Школьный спортзал №1",
-        //         reward: 5000,
-        //         status: "upcoming" // upcoming, completed, cancelled
-        //     }
-        // ]
+         123456789: [
+             {
+                 id: 1,
+                 opponent: "Иван Иванов",
+                 date: "15.12.2024",
+                 time: "18:00",
+                 place: "Школьный спортзал №1",
+                 reward: 5000,
+                 status: "upcoming" // upcoming, completed, cancelled
+             }
+         ]
     },
     
     // ВСЕ БОЙЦЫ EFC™
@@ -68,7 +68,7 @@ const APP_CONFIG = {
                 sport: "Бокс",
                 weight_class: "Средний вес",
                 description: "Претендент на титул",
-                link: "" // Пустая строка - нет ссылки
+                link: "https://telegra.ph/CONTRACT-01-09" // Пустая строка - нет ссылки
             }
         ],
         
