@@ -57,14 +57,14 @@ const APP_CONFIG = {
         "no_category": [
             {
                 id: 1,
-                name: "Иван Петров",
+                name: "Ислам Махачев",
                 rank: "#1 ВНЕ КАТЕГОРИЙ",
                 record: "21-1-0", // победы-поражения-ничьи
-                photo: "https://via.placeholder.com/100/FF6B6B/FFFFFF?text=IP",
+                photo: "https://sun9-71.userapi.com/s/v1/ig2/OLD1CSZwWQALul3lvE2a-dgxNsysn5aIHru7ruY884BOBPV9Rv9CN_3yCKRcYC2BhVZtR8I5unnuKIud7zKR1hA2.jpg?quality=95&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360,480x480,540x540,640x640,720x720,888x888&from=bu&u=TKhlpm8D_0mKDvxJqPds49m33by4h7CaRKlR59TqBX0&cs=640x0",
                 sport: "MMA",
                 weight_class: "Тяжелый вес",
                 description: "Чемпион EFC™",
-                link: "https://example.com/fighter/1"
+                link: "https://telegra.ph/Islam-Mahachev-01-10"
             },
             {
                 id: 2,
