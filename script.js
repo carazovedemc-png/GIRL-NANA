@@ -2,7 +2,8 @@
 let currentPage = 'home';
 let activeFilters = {
     weight: [],
-    sport: []
+    sport: [],
+    gender: []
 };
 let bannerInterval;
 let currentModal = null;
@@ -58,7 +59,7 @@ function loadAppConfig() {
     const logoImg = document.getElementById('app-logo');
     logoImg.src = APP_CONFIG.logoUrl;
     logoImg.onerror = function() {
-        this.src = 'https://via.placeholder.com/40/FF6B6B/FFFFFF?text=EFC';
+        this.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iI2ZmNmI2YiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkVGQzwvdGV4dD48L3N2Zz4=';
     };
 }
 
@@ -75,10 +76,27 @@ function loadBanners() {
     activeBanners.forEach((banner, index) => {
         const bannerSlide = document.createElement('div');
         bannerSlide.className = `banner-slide ${index === 0 ? 'active' : ''}`;
-        bannerSlide.innerHTML = `
-            <img src="${banner.imageUrl}" alt="Баннер" 
-                 onerror="this.src='https://via.placeholder.com/800x400/333/fff?text=EFC+Баннер'">
-        `;
+        
+        // Создаем изображение с предварительной загрузкой
+        const img = document.createElement('img');
+        img.alt = 'Баннер';
+        img.loading = 'lazy'; // Ленивая загрузка
+        
+        // Устанавливаем placeholder первым
+        img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMDAwIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjI0IiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+RkVDIPCfmoAg8J+RjTwvdGV4dD48L3N2Zz4=';
+        
+        // Загружаем реальное изображение
+        const realImg = new Image();
+        realImg.onload = function() {
+            img.src = banner.imageUrl;
+        };
+        realImg.onerror = function() {
+            // Если изображение не загрузилось, оставляем placeholder
+            console.log('Не удалось загрузить баннер');
+        };
+        realImg.src = banner.imageUrl;
+        
+        bannerSlide.appendChild(img);
         
         if (banner.link && banner.link !== '#') {
             bannerSlide.addEventListener('click', () => {
@@ -158,9 +176,29 @@ function loadFightArchive() {
         videoCard.className = 'video-card';
         videoCard.style.animationDelay = `${index * 0.1}s`;
         
-        videoCard.innerHTML = `
-            <img src="${video.thumbnail}" alt="${video.title}" class="video-thumbnail" 
-                 onerror="this.src='https://via.placeholder.com/400x225/333/fff?text=Бой'">
+        // Создаем изображение с placeholder
+        const thumbnail = document.createElement('img');
+        thumbnail.className = 'video-thumbnail';
+        thumbnail.alt = video.title;
+        thumbnail.loading = 'lazy';
+        
+        // Устанавливаем placeholder
+        thumbnail.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIyNSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMzMzIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE2IiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+RkVDIPCfmoAg8J+RjTwvdGV4dD48L3N2Zz4=';
+        
+        // Загружаем реальное изображение
+        const realImg = new Image();
+        realImg.onload = function() {
+            thumbnail.src = video.thumbnail;
+        };
+        realImg.onerror = function() {
+            // Оставляем placeholder
+            console.log('Не удалось загрузить превью видео');
+        };
+        realImg.src = video.thumbnail;
+        
+        videoCard.appendChild(thumbnail);
+        
+        videoCard.innerHTML += `
             <h3>${video.title}</h3>
             <p class="video-description">${video.description}</p>
             <div class="video-date">${video.date}</div>
@@ -183,8 +221,6 @@ function loadFighters() {
     
     container.innerHTML = '';
     
-    let fighterIndex = 0;
-    
     // Сначала бойцы вне категорий
     if (APP_CONFIG.fighters.no_category) {
         APP_CONFIG.fighters.no_category.forEach(fighter => {
@@ -192,9 +228,8 @@ function loadFighters() {
             card.dataset.category = 'no_category';
             card.dataset.weight = fighter.weight_class.toLowerCase().replace(' ', '_');
             card.dataset.sport = fighter.sport.toLowerCase();
-            // УБИРАЕМ animationDelay чтобы не было дёрганий
+            card.dataset.gender = fighter.gender || 'male';
             container.appendChild(card);
-            fighterIndex++;
         });
     }
     
@@ -208,8 +243,8 @@ function loadFighters() {
                     card.dataset.category = category.id;
                     card.dataset.weight = category.id;
                     card.dataset.sport = fighter.sport.toLowerCase();
+                    card.dataset.gender = fighter.gender || 'male';
                     container.appendChild(card);
-                    fighterIndex++;
                 });
             });
         }
@@ -222,8 +257,8 @@ function loadFighters() {
                     card.dataset.category = category.id;
                     card.dataset.weight = fighter.weight_class.toLowerCase().replace(' ', '_');
                     card.dataset.sport = category.id;
+                    card.dataset.gender = fighter.gender || 'male';
                     container.appendChild(card);
-                    fighterIndex++;
                 });
             });
         }
@@ -237,10 +272,16 @@ function createFighterCard(fighter) {
     const card = document.createElement('div');
     card.className = 'fighter-card';
     
+    // SVG placeholder для фото бойца
+    const placeholderSVG = `data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNzAiIGhlaWdodD0iNzAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iIzMzMyIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIyNCIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPiR7ZmlnaHRlci5uYW1lLmNoYXJBdCgwKX08L3RleHQ+PC9zdmc+`;
+    const nameInitial = fighter.name.charAt(0);
+    const placeholder = placeholderSVG.replace('${fighter.name.charAt(0)}', nameInitial);
+    
     card.innerHTML = `
         <div class="fighter-photo">
             <img src="${fighter.photo}" alt="${fighter.name}" 
-                 onerror="this.src='https://via.placeholder.com/70/333/FFFFFF?text=${fighter.name.charAt(0)}'">
+                 loading="lazy"
+                 onerror="this.src='${placeholder}'">
         </div>
         <div class="fighter-info">
             <div class="fighter-rank">${fighter.rank}</div>
@@ -252,7 +293,18 @@ function createFighterCard(fighter) {
         </div>
     `;
     
-    // Обработчик клика на карточку бойца
+    // Предзагрузка реального изображения
+    const img = card.querySelector('img');
+    const realImg = new Image();
+    realImg.onload = function() {
+        img.src = fighter.photo;
+    };
+    realImg.onerror = function() {
+        // Оставляем placeholder
+        console.log(`Не удалось загрузить фото бойца: ${fighter.name}`);
+    };
+    realImg.src = fighter.photo;
+    
     card.addEventListener('click', function() {
         if (fighter.link && fighter.link.trim() !== '') {
             window.open(fighter.link, '_blank');
@@ -322,8 +374,7 @@ function updateProfileDisplay() {
             const avatarUrl = auth.getUserAvatar();
             userAvatar.src = avatarUrl;
             userAvatar.onerror = function() {
-                this.src = 'https://via.placeholder.com/100/FF6B6B/FFFFFF?text=' + 
-                          (user.first_name?.charAt(0) || 'U');
+                this.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZmY2YjZiIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjMwIiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+VTwvdGV4dD48L3N2Zz4=';
             };
         }
     }
@@ -787,6 +838,21 @@ function showFilterModal() {
                 <h2><i class="fas fa-filter"></i> Фильтр бойцов</h2>
             </div>
             <div class="modal-body">
+                <!-- Фильтр по полу -->
+                <div class="filter-section">
+                    <h3>Пол</h3>
+                    <div class="filter-group">
+                        <div class="filter-option ${activeFilters.gender.includes('male') ? 'active' : ''}">
+                            <input type="checkbox" id="gender-male" ${activeFilters.gender.includes('male') ? 'checked' : ''}>
+                            <label for="gender-male">Мужчины</label>
+                        </div>
+                        <div class="filter-option ${activeFilters.gender.includes('female') ? 'active' : ''}">
+                            <input type="checkbox" id="gender-female" ${activeFilters.gender.includes('female') ? 'checked' : ''}>
+                            <label for="gender-female">Женщины</label>
+                        </div>
+                    </div>
+                </div>
+                
                 <div class="filter-section">
                     <h3>Весовая категория</h3>
                     <div class="filter-group">
@@ -804,7 +870,7 @@ function showFilterModal() {
                         </div>
                         <div class="filter-option ${activeFilters.weight.includes('super_heavy') ? 'active' : ''}">
                             <input type="checkbox" id="weight-super_heavy" ${activeFilters.weight.includes('super_heavy') ? 'checked' : ''}>
-                            <label for="weight-super_heavy">Супертяжелый вес</label>
+                            <label for="weight-super_heavy">Супертяжелый</label>
                         </div>
                     </div>
                 </div>
@@ -845,20 +911,25 @@ function showFilterModal() {
     
     openModal(modal);
     
-    // Обработчики чекбоксов
+    // Обработчики кликов по фильтрам
     modal.querySelectorAll('.filter-option').forEach(option => {
         option.addEventListener('click', function(e) {
-            if (e.target.type !== 'checkbox') {
-                const checkbox = this.querySelector('input[type="checkbox"]');
-                checkbox.checked = !checkbox.checked;
-                this.classList.toggle('active');
-                
-                // Анимация нажатия
-                this.style.transform = 'scale(0.95)';
-                setTimeout(() => {
-                    this.style.transform = '';
-                }, 150);
-            }
+            // Разрешаем клик по всей области
+            const checkbox = this.querySelector('input[type="checkbox"]');
+            checkbox.checked = !checkbox.checked;
+            this.classList.toggle('active');
+            
+            // Анимация нажатия
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                this.style.transform = '';
+            }, 150);
+        });
+        
+        // Отключаем клик по самому чекбоксу, чтобы не было двойного срабатывания
+        const checkbox = option.querySelector('input[type="checkbox"]');
+        checkbox.addEventListener('click', function(e) {
+            e.stopPropagation();
         });
     });
     
@@ -868,15 +939,19 @@ function showFilterModal() {
         setTimeout(() => {
             const selectedWeights = [];
             const selectedSports = [];
+            const selectedGenders = [];
             
             modal.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
-                if (checkbox.id.startsWith('weight-')) {
+                if (checkbox.id.startsWith('gender-')) {
+                    selectedGenders.push(checkbox.id.replace('gender-', ''));
+                } else if (checkbox.id.startsWith('weight-')) {
                     selectedWeights.push(checkbox.id.replace('weight-', ''));
                 } else if (checkbox.id.startsWith('sport-')) {
                     selectedSports.push(checkbox.id.replace('sport-', ''));
                 }
             });
             
+            activeFilters.gender = selectedGenders;
             activeFilters.weight = selectedWeights;
             activeFilters.sport = selectedSports;
             
@@ -889,6 +964,7 @@ function showFilterModal() {
     modal.querySelector('#reset-filters-btn').addEventListener('click', function(e) {
         animateButtonClick(e.target);
         setTimeout(() => {
+            activeFilters.gender = [];
             activeFilters.weight = [];
             activeFilters.sport = [];
             
@@ -915,13 +991,15 @@ function applyFiltersToFighters() {
     const fighters = document.querySelectorAll('.fighter-card');
     
     fighters.forEach(fighter => {
+        const fighterGender = fighter.dataset.gender || 'male';
         const fighterWeight = fighter.dataset.weight;
         const fighterSport = fighter.dataset.sport;
         
+        let genderMatch = activeFilters.gender.length === 0 || activeFilters.gender.includes(fighterGender);
         let weightMatch = activeFilters.weight.length === 0 || activeFilters.weight.includes(fighterWeight);
         let sportMatch = activeFilters.sport.length === 0 || activeFilters.sport.includes(fighterSport);
         
-        if (weightMatch && sportMatch) {
+        if (genderMatch && weightMatch && sportMatch) {
             fighter.style.display = 'flex';
         } else {
             fighter.style.display = 'none';

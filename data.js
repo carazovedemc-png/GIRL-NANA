@@ -75,7 +75,8 @@ const APP_CONFIG = {
                 weight_class: "Тяжелый вес",
                 description: "Чемпион EFC™",
                 link: "https://telegra.ph/Islam-Mahachev-01-10",
-                badges: ["admin", "fighter"]
+                badges: ["admin", "fighter"],
+                gender: "male" // Добавлено поле gender
             },
             {
                 id: 2,
@@ -87,7 +88,8 @@ const APP_CONFIG = {
                 weight_class: "Средний вес",
                 description: "Претендент на титул",
                 link: "", // Пустая строка - нет ссылки
-                badges: ["fighter"]
+                badges: ["fighter"],
+                gender: "male" // Добавлено поле gender
             }
         ],
         
@@ -109,7 +111,8 @@ const APP_CONFIG = {
                             weight_class: "Легкий вес",
                             description: "Специалист по грэпплингу",
                             link: "https://example.com/fighter/3",
-                            badges: ["fighter"]
+                            badges: ["fighter"],
+                            gender: "male" // Добавлено поле gender
                         }
                     ]
                 },
@@ -127,7 +130,8 @@ const APP_CONFIG = {
                             weight_class: "Средний вес",
                             description: "Нокаутер",
                             link: "https://example.com/fighter/4",
-                            badges: ["fighter"]
+                            badges: ["fighter"],
+                            gender: "male" // Добавлено поле gender
                         }
                     ]
                 },
@@ -145,7 +149,8 @@ const APP_CONFIG = {
                             weight_class: "Тяжелый вес",
                             description: "Силовой боец",
                             link: "https://example.com/fighter/9",
-                            badges: ["fighter"]
+                            badges: ["fighter"],
+                            gender: "male" // Добавлено поле gender
                         }
                     ]
                 },
@@ -163,7 +168,8 @@ const APP_CONFIG = {
                             weight_class: "Супертяжелый вес",
                             description: "Непобедимый гигант",
                             link: "https://example.com/fighter/10",
-                            badges: ["fighter"]
+                            badges: ["fighter"],
+                            gender: "male" // Добавлено поле gender
                         }
                     ]
                 }
@@ -185,7 +191,8 @@ const APP_CONFIG = {
                             weight_class: "Полутяжелый вес",
                             description: "Непобежденный",
                             link: "https://example.com/fighter/5",
-                            badges: ["fighter"]
+                            badges: ["fighter"],
+                            gender: "male" // Добавлено поле gender
                         }
                     ]
                 },
@@ -203,7 +210,8 @@ const APP_CONFIG = {
                             weight_class: "Тяжелый вес",
                             description: "Опытный боксер",
                             link: "https://example.com/fighter/6",
-                            badges: ["fighter"]
+                            badges: ["fighter"],
+                            gender: "male" // Добавлено поле gender
                         }
                     ]
                 },
@@ -221,7 +229,8 @@ const APP_CONFIG = {
                             weight_class: "Тренер",
                             description: "Тренер по хостингу",
                             link: "https://example.com/fighter/7",
-                            badges: ["trainer"]
+                            badges: ["trainer"],
+                            gender: "male" // Добавлено поле gender
                         }
                     ]
                 },
@@ -239,7 +248,8 @@ const APP_CONFIG = {
                             weight_class: "Тяжелый вес",
                             description: "Мастер борьбы",
                             link: "https://example.com/fighter/8",
-                            badges: ["fighter"]
+                            badges: ["fighter"],
+                            gender: "male" // Добавлено поле gender
                         }
                     ]
                 }
