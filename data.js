@@ -15,6 +15,16 @@ const APP_CONFIG = {
         1745639675, // Ваш ID администратора
     ],
     
+    // Бойцы (Telegram ID)
+    fighters: [
+        1745639675, // Ваш ID бойца
+    ],
+    
+    // Тренеры (Telegram ID)
+    trainers: [
+        1745639675, // Ваш ID тренера
+    ],
+    
     // Пользователи с доступом к ставкам (18+)
     betsAllowedUsers: [
         1745639675, // Ваш ID
@@ -64,7 +74,8 @@ const APP_CONFIG = {
                 sport: "MMA",
                 weight_class: "Тяжелый вес",
                 description: "Чемпион EFC™",
-                link: "https://telegra.ph/Islam-Mahachev-01-10"
+                link: "https://telegra.ph/Islam-Mahachev-01-10",
+                badges: ["admin", "fighter"]
             },
             {
                 id: 2,
@@ -75,7 +86,8 @@ const APP_CONFIG = {
                 sport: "Бокс",
                 weight_class: "Средний вес",
                 description: "Претендент на титул",
-                link: "" // Пустая строка - нет ссылки
+                link: "", // Пустая строка - нет ссылки
+                badges: ["fighter"]
             }
         ],
         
@@ -96,7 +108,8 @@ const APP_CONFIG = {
                             sport: "MMA",
                             weight_class: "Легкий вес",
                             description: "Специалист по грэпплингу",
-                            link: "https://example.com/fighter/3"
+                            link: "https://example.com/fighter/3",
+                            badges: ["fighter"]
                         }
                     ]
                 },
@@ -113,7 +126,8 @@ const APP_CONFIG = {
                             sport: "Бокс",
                             weight_class: "Средний вес",
                             description: "Нокаутер",
-                            link: "https://example.com/fighter/4"
+                            link: "https://example.com/fighter/4",
+                            badges: ["fighter"]
                         }
                     ]
                 },
@@ -130,7 +144,8 @@ const APP_CONFIG = {
                             sport: "MMA",
                             weight_class: "Тяжелый вес",
                             description: "Силовой боец",
-                            link: "https://example.com/fighter/9"
+                            link: "https://example.com/fighter/9",
+                            badges: ["fighter"]
                         }
                     ]
                 },
@@ -147,7 +162,8 @@ const APP_CONFIG = {
                             sport: "Борьба",
                             weight_class: "Супертяжелый вес",
                             description: "Непобедимый гигант",
-                            link: "https://example.com/fighter/10"
+                            link: "https://example.com/fighter/10",
+                            badges: ["fighter"]
                         }
                     ]
                 }
@@ -168,7 +184,8 @@ const APP_CONFIG = {
                             sport: "MMA",
                             weight_class: "Полутяжелый вес",
                             description: "Непобежденный",
-                            link: "https://example.com/fighter/5"
+                            link: "https://example.com/fighter/5",
+                            badges: ["fighter"]
                         }
                     ]
                 },
@@ -185,7 +202,8 @@ const APP_CONFIG = {
                             sport: "Бокс",
                             weight_class: "Тяжелый вес",
                             description: "Опытный боксер",
-                            link: "https://example.com/fighter/6"
+                            link: "https://example.com/fighter/6",
+                            badges: ["fighter"]
                         }
                     ]
                 },
@@ -202,7 +220,8 @@ const APP_CONFIG = {
                             sport: "Хостинг",
                             weight_class: "Тренер",
                             description: "Тренер по хостингу",
-                            link: "https://example.com/fighter/7"
+                            link: "https://example.com/fighter/7",
+                            badges: ["trainer"]
                         }
                     ]
                 },
@@ -219,7 +238,8 @@ const APP_CONFIG = {
                             sport: "Борьба",
                             weight_class: "Тяжелый вес",
                             description: "Мастер борьбы",
-                            link: "https://example.com/fighter/8"
+                            link: "https://example.com/fighter/8",
+                            badges: ["fighter"]
                         }
                     ]
                 }
@@ -312,4 +332,77 @@ const APP_CONFIG = {
             description: "Спортивная борьба"
         }
     ]
+};
+
+// Image Cache System
+const ImageCache = {
+    cacheName: 'efc-images-v2',
+    
+    async cacheImage(url) {
+        try {
+            if (!url || url.startsWith('data:') || url.includes('via.placeholder.com')) return url;
+            
+            const cache = await caches.open(this.cacheName);
+            const cachedResponse = await cache.match(url);
+            
+            if (cachedResponse) {
+                return URL.createObjectURL(await cachedResponse.blob());
+            }
+            
+            const response = await fetch(url);
+            if (!response.ok) throw new Error('Network response was not ok');
+            
+            await cache.put(url, response.clone());
+            return URL.createObjectURL(await response.blob());
+        } catch (error) {
+            console.warn('Image cache error for', url, ':', error);
+            return url;
+        }
+    },
+    
+    async preloadImages() {
+        const allImages = [];
+        
+        // Баннеры
+        APP_CONFIG.banners.forEach(banner => {
+            if (banner.imageUrl) allImages.push(banner.imageUrl);
+        });
+        
+        // Фото бойцов
+        if (APP_CONFIG.fighters.no_category) {
+            APP_CONFIG.fighters.no_category.forEach(fighter => {
+                if (fighter.photo) allImages.push(fighter.photo);
+            });
+        }
+        
+        if (APP_CONFIG.fighters.categories) {
+            APP_CONFIG.fighters.categories.weight_classes?.forEach(category => {
+                category.fighters.forEach(fighter => {
+                    if (fighter.photo) allImages.push(fighter.photo);
+                });
+            });
+            
+            APP_CONFIG.fighters.categories.sports?.forEach(category => {
+                category.fighters.forEach(fighter => {
+                    if (fighter.photo) allImages.push(fighter.photo);
+                });
+            });
+        }
+        
+        // Архив боев
+        APP_CONFIG.fightArchive.forEach(video => {
+            if (video.thumbnail) allImages.push(video.thumbnail);
+        });
+        
+        // Логотип
+        allImages.push(APP_CONFIG.logoUrl);
+        
+        // Предварительная загрузка
+        const promises = allImages.map(url => this.cacheImage(url).catch(() => null));
+        await Promise.allSettled(promises);
+    },
+    
+    clearCache() {
+        return caches.delete(this.cacheName);
+    }
 };

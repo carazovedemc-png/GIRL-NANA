@@ -133,6 +133,11 @@ class TelegramAuth {
         const avatarUrl = this.getUserAvatar();
         if (avatarUrl && avatarEl) {
             avatarEl.src = avatarUrl;
+            avatarEl.onerror = function() {
+                const name = window.TelegramAuth.getUserName();
+                const initial = name.charAt(0).toUpperCase();
+                this.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(initial)}&background=FF6B6B&color=fff&size=200`;
+            };
         }
         
         if (nameEl) nameEl.textContent = this.getUserName();
@@ -145,6 +150,29 @@ class TelegramAuth {
         setTimeout(() => {
             welcomeEl.classList.remove('active');
         }, 2500);
+    }
+    
+    // Новые методы для работы с ролями
+    isAdmin() {
+        const userId = parseInt(this.getUserId());
+        return APP_CONFIG.admins.includes(userId);
+    }
+    
+    isTrainer() {
+        const userId = parseInt(this.getUserId());
+        return APP_CONFIG.trainers.includes(userId);
+    }
+    
+    isFighter() {
+        const userId = this.getUserId();
+        return APP_CONFIG.contracts.hasOwnProperty(userId);
+    }
+    
+    getUserRole() {
+        if (this.isAdmin()) return 'admin';
+        if (this.isTrainer()) return 'trainer';
+        if (this.isFighter()) return 'fighter';
+        return 'user';
     }
 }
 

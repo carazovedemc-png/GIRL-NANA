@@ -12,6 +12,19 @@
     padding: 0;
     box-sizing: border-box;
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+}
+
+input, textarea {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
 }
 
 body {
@@ -56,10 +69,11 @@ body {
     font-size: 1.2rem;
 }
 
-/* Хедер - ИСПРАВЛЕНО */
+/* Хедер - Исправлен для iOS */
 .glass-header {
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(20px);
+    background: rgba(15, 15, 30, 0.95);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
     border-bottom: 1px solid rgba(255, 255, 255, 0.12);
     padding: 10px 20px;
     position: sticky;
@@ -68,6 +82,12 @@ body {
     height: 60px;
     display: flex;
     align-items: center;
+    border-radius: 0 0 20px 20px;
+    margin: 0 10px;
+    width: calc(100% - 20px);
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .header-content {
@@ -75,6 +95,7 @@ body {
     align-items: center;
     gap: 15px;
     width: 100%;
+    justify-content: center;
 }
 
 .logo-container {
@@ -92,9 +113,10 @@ body {
 .app-title {
     font-size: 1.8rem;
     font-weight: 700;
-    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: #ffffff !important;
+    background: none !important;
+    -webkit-background-clip: initial !important;
+    -webkit-text-fill-color: white !important;
 }
 
 /* Анимация приветствия */
@@ -116,6 +138,12 @@ body {
 .telegram-welcome.active {
     display: flex;
     opacity: 1;
+    animation: welcomeSlideIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes welcomeSlideIn {
+    from { opacity: 0; transform: translateY(-30px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .welcome-content {
@@ -130,6 +158,12 @@ body {
     overflow: hidden;
     margin: 0 auto 20px;
     border: 3px solid var(--primary-color);
+    animation: avatarPulse 2s infinite;
+}
+
+@keyframes avatarPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
 }
 
 .welcome-avatar img {
@@ -157,25 +191,49 @@ body {
 /* Основной контент */
 main {
     padding: 20px;
+    padding-top: 80px;
+    animation: mainFadeIn 0.4s ease-out;
+}
+
+@keyframes mainFadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .page {
     display: none;
-    animation: pageFade 0.3s;
+    animation: pageSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .page.active {
     display: block;
+    animation: pageSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-@keyframes pageFade {
-    from { opacity: 0; }
-    to { opacity: 1; }
+@keyframes pageSlideIn {
+    from { 
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to { 
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
 /* Баннеры */
 .banner-container {
     margin: 20px 0;
+    position: relative;
+    min-height: 180px;
+    overflow: hidden;
+    border-radius: 15px;
+}
+
+.banner-slider {
+    display: flex;
+    transition: transform 0.5s ease;
+    width: 300%;
 }
 
 .banner {
@@ -184,7 +242,7 @@ main {
     border-radius: 15px;
     overflow: hidden;
     position: relative;
-    margin-bottom: 15px;
+    flex-shrink: 0;
 }
 
 .banner img {
@@ -198,6 +256,30 @@ main {
     transform: scale(1.05);
 }
 
+.banner-dots {
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+.banner-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.banner-dot.active {
+    background: var(--primary-color);
+    transform: scale(1.2);
+}
+
 /* Карточки */
 .fight-card, .news-card, .video-card, .fighter-card {
     background: var(--card-bg);
@@ -205,13 +287,15 @@ main {
     padding: 20px;
     margin-bottom: 15px;
     border: 1px solid rgba(255, 255, 255, 0.08);
-    transition: transform 0.3s, border-color 0.3s;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
+    transform-origin: center;
 }
 
 .fight-card:hover, .news-card:hover, .video-card:hover, .fighter-card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-5px) scale(1.02);
     border-color: rgba(255, 107, 107, 0.3);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
 .fight-card h3 {
@@ -236,12 +320,16 @@ main {
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s;
-    width: 100%;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    max-width: 300px;
+    margin: 0 auto;
+    display: block;
+    width: auto;
+    min-width: 140px;
 }
 
 .btn-primary:hover {
-    transform: translateY(-2px);
+    transform: translateY(-2px) scale(1.05);
     box-shadow: 0 10px 20px rgba(255, 107, 107, 0.3);
 }
 
@@ -254,16 +342,34 @@ main {
     font-size: 1rem;
     cursor: pointer;
     transition: all 0.3s;
-    width: 100%;
+    max-width: 300px;
+    margin: 10px auto 0;
+    display: block;
+    width: auto;
+    min-width: 140px;
 }
 
 .btn-secondary:hover {
     background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+}
+
+.buy-ticket-btn {
+    max-width: 200px;
+    margin: 10px auto 0;
+    padding: 10px 20px;
+    font-size: 0.9rem;
 }
 
 /* Секции */
 .upcoming-fights, .news-section, .videos-container {
     margin: 30px 0;
+    animation: sectionFadeIn 0.5s ease-out;
+}
+
+@keyframes sectionFadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .upcoming-fights h2, .news-section h2, .videos-container h2, .fighters-page h2 {
@@ -314,6 +420,11 @@ main {
     border-radius: 10px;
     object-fit: cover;
     margin-bottom: 15px;
+    transition: transform 0.3s;
+}
+
+.video-thumbnail:hover {
+    transform: scale(1.03);
 }
 
 .video-description {
@@ -327,7 +438,7 @@ main {
     font-size: 0.9rem;
 }
 
-/* Бойцы - ИСПРАВЛЕНО */
+/* Бойцы */
 .fighters-page {
     position: relative;
 }
@@ -347,15 +458,18 @@ main {
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     align-items: center;
     gap: 10px;
+    min-width: 200px;
+    justify-content: center;
 }
 
 .filter-btn-main:hover {
     background: rgba(255, 107, 107, 0.3);
-    transform: translateY(-2px);
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 8px 20px rgba(255, 107, 107, 0.2);
 }
 
 .fighters-container {
@@ -368,14 +482,28 @@ main {
     align-items: center;
     gap: 15px;
     padding: 15px;
+    animation: cardAppear 0.4s ease-out;
+    animation-fill-mode: both;
+}
+
+@keyframes cardAppear {
+    from { 
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+    }
+    to { 
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
 .fighter-photo {
     width: 70px;
     height: 70px;
-    border-radius: 50%;
+    border-radius: 10px;
     overflow: hidden;
     flex-shrink: 0;
+    border: 2px solid rgba(255, 255, 255, 0.1);
 }
 
 .fighter-photo img {
@@ -399,7 +527,7 @@ main {
     font-size: 1.1rem;
     font-weight: 600;
     margin-bottom: 5px;
-    color: white; /* ИСПРАВЛЕНО: белый текст */
+    color: white;
 }
 
 .fighter-record {
@@ -422,6 +550,7 @@ main {
 .profile-header {
     text-align: center;
     margin-bottom: 30px;
+    position: relative;
 }
 
 .avatar-container {
@@ -431,6 +560,7 @@ main {
     overflow: hidden;
     margin: 0 auto 20px;
     border: 3px solid var(--primary-color);
+    position: relative;
 }
 
 .avatar {
@@ -439,10 +569,53 @@ main {
     object-fit: cover;
 }
 
+.user-badge-container {
+    position: absolute;
+    bottom: 5px;
+    right: -5px;
+    background: var(--dark-bg);
+    border-radius: 50%;
+    padding: 3px;
+}
+
+.user-badge {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+}
+
+.badge-admin {
+    background: #1DA1F2;
+    color: white;
+}
+
+.badge-fighter {
+    background: #FF6B6B;
+    color: white;
+}
+
+.badge-trainer {
+    background: #4ECDC4;
+    color: white;
+}
+
+.badge-icon {
+    width: 14px;
+    height: 14px;
+}
+
 .profile-header h2 {
     font-size: 1.8rem;
     margin-bottom: 5px;
-    color: white; /* ИСПРАВЛЕНО: белый текст */
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
 }
 
 .status {
@@ -464,14 +637,16 @@ main {
     align-items: center;
     gap: 15px;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     text-align: left;
     width: 100%;
+    transform-origin: left center;
 }
 
 .profile-btn:hover {
-    transform: translateX(5px);
+    transform: translateX(10px) scale(1.02);
     border-color: rgba(255, 107, 107, 0.3);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
 .btn-icon {
@@ -495,7 +670,7 @@ main {
     font-weight: 600;
     font-size: 1rem;
     margin-bottom: 3px;
-    color: white; /* ИСПРАВЛЕНО: белый текст */
+    color: white;
 }
 
 .btn-subtitle {
@@ -511,17 +686,27 @@ main {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(5px);
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     display: none;
     justify-content: center;
     align-items: center;
     z-index: 1002;
     padding: 20px;
+    opacity: 0;
+    transition: opacity 0.3s;
 }
 
 .modal.active {
     display: flex;
+    opacity: 1;
+    animation: modalBackdropIn 0.3s ease-out;
+}
+
+@keyframes modalBackdropIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 .modal-content {
@@ -531,13 +716,35 @@ main {
     max-width: 500px;
     max-height: 90vh;
     overflow-y: auto;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    animation: modalFade 0.3s;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    animation: modalSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: center;
 }
 
-@keyframes modalFade {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
+@keyframes modalSlideIn {
+    from { 
+        opacity: 0;
+        transform: translateY(40px) scale(0.95);
+    }
+    to { 
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.modal.closing .modal-content {
+    animation: modalSlideOut 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes modalSlideOut {
+    from { 
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+    to { 
+        opacity: 0;
+        transform: translateY(40px) scale(0.95);
+    }
 }
 
 .modal-header {
@@ -546,6 +753,11 @@ main {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    position: sticky;
+    top: 0;
+    background: var(--dark-bg);
+    border-radius: 20px 20px 0 0;
+    z-index: 1;
 }
 
 .modal-header h2 {
@@ -553,14 +765,14 @@ main {
     display: flex;
     align-items: center;
     gap: 10px;
-    color: white; /* ИСПРАВЛЕНО: белый текст */
+    color: white;
 }
 
 .modal-close {
-    background: none;
+    background: rgba(255, 255, 255, 0.1);
     border: none;
     color: var(--text-secondary);
-    font-size: 2rem;
+    font-size: 1.5rem;
     cursor: pointer;
     width: 40px;
     height: 40px;
@@ -568,10 +780,13 @@ main {
     align-items: center;
     justify-content: center;
     border-radius: 10px;
+    transition: all 0.3s;
 }
 
 .modal-close:hover {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 107, 107, 0.2);
+    color: var(--primary-color);
+    transform: rotate(90deg);
 }
 
 .modal-body {
@@ -598,12 +813,13 @@ main {
     padding: 12px 15px;
     color: var(--text-primary);
     font-size: 1rem;
-    transition: border-color 0.3s;
+    transition: all 0.3s;
 }
 
 .form-input:focus, .form-textarea:focus {
     outline: none;
     border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
 }
 
 .form-textarea {
@@ -615,6 +831,20 @@ main {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 15px;
+}
+
+.form-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 25px;
+}
+
+.form-buttons .btn-primary,
+.form-buttons .btn-secondary {
+    width: 100%;
+    max-width: none;
+    margin: 0;
 }
 
 /* Стили для фильтров */
@@ -649,6 +879,7 @@ main {
 
 .filter-option:hover {
     background: rgba(255, 255, 255, 0.08);
+    transform: translateY(-2px);
 }
 
 .filter-option.active {
@@ -680,6 +911,11 @@ main {
     padding: 15px;
     margin-bottom: 10px;
     border-left: 4px solid var(--primary-color);
+    transition: transform 0.3s;
+}
+
+.fight-item:hover {
+    transform: translateX(5px);
 }
 
 .fight-item h3 {
@@ -728,7 +964,7 @@ main {
     font-size: 1.1rem;
 }
 
-/* ИСПРАВЛЕНИЕ НАВИГАЦИИ */
+/* Навигация - Исправлен для iOS */
 .glass-nav {
     position: fixed;
     bottom: 10px;
@@ -739,8 +975,9 @@ main {
     padding: 8px;
     z-index: 1000;
     border-radius: 20px;
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(20px);
+    background: rgba(15, 15, 30, 0.95);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
     border: 1px solid rgba(255, 255, 255, 0.12);
     display: flex;
     justify-content: space-around;
@@ -768,22 +1005,158 @@ main {
     cursor: pointer;
     padding: 10px 15px;
     border-radius: 10px;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     align-items: center;
     justify-content: center;
     min-width: 50px;
     min-height: 50px;
+    position: relative;
+    overflow: hidden;
+}
+
+.nav-btn::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 3px;
+    background: var(--primary-color);
+    transition: width 0.3s;
 }
 
 .nav-btn.active {
-    background: rgba(255, 107, 107, 0.2);
     color: #FF6B6B;
-    transform: translateY(-2px);
+}
+
+.nav-btn.active::after {
+    width: 20px;
+}
+
+/* Уведомления */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: -400px;
+    background: rgba(15, 15, 30, 0.95);
+    border: 1px solid rgba(255, 107, 107, 0.3);
+    border-radius: 12px;
+    padding: 15px 20px;
+    z-index: 9999;
+    max-width: 350px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.notification.show {
+    right: 20px;
+}
+
+.notification-content {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.notification-icon {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+}
+
+.notification-text {
+    color: white;
+    font-size: 0.95rem;
+    flex: 1;
+}
+
+.notification-close {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s;
+}
+
+.notification-close:hover {
+    background: rgba(255, 107, 107, 0.2);
+    color: var(--primary-color);
+}
+
+/* Admin Panel */
+.admin-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.admin-stat-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    padding: 15px;
+    text-align: center;
+}
+
+.admin-stat-value {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.admin-stat-label {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.admin-actions {
+    display: grid;
+    gap: 10px;
+}
+
+.admin-action-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 15px;
+    color: var(--text-primary);
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.admin-action-btn:hover {
+    background: rgba(255, 107, 107, 0.1);
+    border-color: var(--primary-color);
+    transform: translateX(5px);
+}
+
+.admin-action-btn i {
+    color: var(--primary-color);
+    font-size: 1.2rem;
 }
 
 /* Адаптивность */
 @media (max-width: 768px) {
+    .glass-header {
+        margin: 0 10px;
+        width: calc(100% - 20px);
+    }
+    
     .app-title {
         font-size: 1.5rem;
     }
@@ -807,6 +1180,14 @@ main {
     .filter-group {
         grid-template-columns: 1fr;
     }
+    
+    .admin-stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .notification {
+        max-width: calc(100% - 40px);
+    }
 }
 
 @media (min-width: 769px) {
@@ -821,4 +1202,22 @@ main {
     .fighters-container {
         grid-template-columns: repeat(2, 1fr);
     }
+    
+    .glass-header {
+        max-width: 700px;
+    }
+    
+    .glass-nav {
+        max-width: 500px;
+    }
+}
+
+/* Image Cache Helper */
+.img-cached {
+    animation: imgFadeIn 0.5s ease-out;
+}
+
+@keyframes imgFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
