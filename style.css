@@ -75,26 +75,26 @@ body {
     width: 100%;
 }
 
-/* ВЕРХНЯЯ ПАНЕЛЬ - ИСПРАВЛЕНА (матовый чёрный фон, размытие, правильные отступы) */
+/* ВЕРХНЯЯ ПАНЕЛЬ - ИСПРАВЛЕНА (такой же фон как у нижней, поднята, расширена) */
 .glass-header {
-    background: rgba(0, 0, 0, 0.85); /* Матовый чёрный */
-    backdrop-filter: blur(25px) saturate(200%);
-    -webkit-backdrop-filter: blur(25px) saturate(200%);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    padding: 8px 20px;
+    background: rgba(15, 15, 30, 0.9); /* ТАКОЙ ЖЕ как у нижней панели */
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 8px 25px; /* Увеличил padding справа и слева */
     position: fixed;
-    top: 35px; /* Опущена ниже */
+    top: 30px; /* Поднял на 5px вверх (было 35px) */
     left: 50%;
     transform: translateX(-50%);
     z-index: 1000;
     height: 60px;
     display: flex;
     align-items: center;
-    width: calc(100% - 30px);
-    max-width: 450px;
+    width: calc(100% - 20px); /* Расширил на 10px (было 30px) */
+    max-width: 460px; /* Расширил на 10px (было 450px) */
     border-radius: 15px;
     margin: 0 auto;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
 
 .header-content {
@@ -104,6 +104,7 @@ body {
     width: 100%;
     justify-content: center;
     position: relative;
+    margin-left: 8px; /* Сместил контент вправо на 8px */
 }
 
 .logo-container {
@@ -125,6 +126,7 @@ body {
     background: none !important;
     -webkit-background-clip: initial !important;
     -webkit-text-fill-color: white !important;
+    margin-left: 2px; /* Дополнительное смещение названия вправо */
 }
 
 /* Анимация приветствия */
@@ -188,11 +190,11 @@ body {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* Основной контент - УВЕЛИЧЕН ОТСТУП СВЕРХУ И СНИЗУ */
+/* Основной контент - скорректированные отступы */
 main {
     padding: 15px;
-    padding-top: 110px; /* Увеличен отступ сверху (было 85px) */
-    padding-bottom: 90px; /* Увеличен отступ снизу (было 80px) */
+    padding-top: 105px; /* Скорректировал отступ сверху */
+    padding-bottom: 90px;
     min-height: 100vh;
 }
 
@@ -741,7 +743,7 @@ main {
     align-items: flex-start;
     z-index: 10002;
     padding: 20px;
-    padding-top: 100px; /* Увеличен отступ сверху */
+    padding-top: 100px;
     opacity: 0;
     transition: opacity 0.3s;
     overflow-y: auto;
@@ -852,7 +854,7 @@ main {
     gap: 12px;
 }
 
-/* Стили для фильтров (ОБНОВЛЕНЫ) */
+/* Стили для фильтров */
 .filter-section {
     margin-bottom: 20px;
     animation: slideUp 0.5s ease-out;
@@ -1065,7 +1067,7 @@ main {
 /* Уведомления */
 .notification {
     position: fixed;
-    top: 110px; /* Под новой верхней панелью */
+    top: 105px; /* Скорректировал под новую высоту панели */
     right: -400px;
     background: rgba(15, 15, 30, 0.95);
     border: 1px solid rgba(255, 107, 107, 0.3);
@@ -1185,13 +1187,19 @@ main {
 /* Адаптивность */
 @media (max-width: 768px) {
     .glass-header {
-        padding: 5px 15px;
-        width: calc(100% - 30px);
-        top: 30px;
+        padding: 5px 20px;
+        width: calc(100% - 20px);
+        top: 25px;
+        max-width: 460px;
+    }
+    
+    .header-content {
+        margin-left: 5px;
     }
     
     .app-title {
         font-size: 1.3rem;
+        margin-left: 1px;
     }
     
     .form-row {
@@ -1220,11 +1228,11 @@ main {
     
     .notification {
         max-width: calc(100% - 30px);
-        top: 105px;
+        top: 100px;
     }
     
     main {
-        padding-top: 105px;
+        padding-top: 100px;
         padding-bottom: 85px;
     }
 }
@@ -1247,6 +1255,6 @@ main {
     }
     
     .notification {
-        top: 110px;
+        top: 105px;
     }
 }
