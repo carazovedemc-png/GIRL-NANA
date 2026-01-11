@@ -10,11 +10,6 @@ let currentModal = null;
 // Инициализация при загрузке
 document.addEventListener('DOMContentLoaded', function() {
     try {
-        // Инициализируем обработчик Telegram Web App
-        if (window.TelegramWebAppHandler) {
-            window.TelegramWebAppHandler.init();
-        }
-        
         // Сразу скрываем загрузчик
         document.getElementById('loader').style.display = 'none';
         
@@ -181,6 +176,7 @@ function loadFightArchive() {
     });
 }
 
+// ИСПРАВЛЕННАЯ ФУНКЦИЯ ЗАГРУЗКИ БОЙЦОВ (без дёрганий)
 function loadFighters() {
     const container = document.getElementById('fighters-container');
     if (!container) return;
@@ -196,7 +192,7 @@ function loadFighters() {
             card.dataset.category = 'no_category';
             card.dataset.weight = fighter.weight_class.toLowerCase().replace(' ', '_');
             card.dataset.sport = fighter.sport.toLowerCase();
-            card.style.animationDelay = `${fighterIndex * 0.1}s`; // Увеличена задержка
+            // УБИРАЕМ animationDelay чтобы не было дёрганий
             container.appendChild(card);
             fighterIndex++;
         });
@@ -212,7 +208,6 @@ function loadFighters() {
                     card.dataset.category = category.id;
                     card.dataset.weight = category.id;
                     card.dataset.sport = fighter.sport.toLowerCase();
-                    card.style.animationDelay = `${fighterIndex * 0.1}s`;
                     container.appendChild(card);
                     fighterIndex++;
                 });
@@ -227,19 +222,12 @@ function loadFighters() {
                     card.dataset.category = category.id;
                     card.dataset.weight = fighter.weight_class.toLowerCase().replace(' ', '_');
                     card.dataset.sport = category.id;
-                    card.style.animationDelay = `${fighterIndex * 0.1}s`;
                     container.appendChild(card);
                     fighterIndex++;
                 });
             });
         }
     }
-    
-    // Показываем контейнер с анимацией
-    setTimeout(() => {
-        container.style.opacity = '1';
-        container.style.transform = 'translateY(0)';
-    }, 100);
     
     // Применяем текущие фильтры
     applyFiltersToFighters();
@@ -429,7 +417,7 @@ function animateButtonClick(button) {
     }, 150);
 }
 
-// Функция открытия модального окна с обработкой Telegram кнопки "Назад"
+// Функция открытия модального окна
 function openModal(modal) {
     currentModal = modal;
     document.body.appendChild(modal);
@@ -439,9 +427,10 @@ function openModal(modal) {
         modal.classList.add('active');
     }, 10);
     
-    // Показываем кнопку "Назад" в Telegram Web App
-    if (window.TelegramWebAppHandler && window.TelegramWebAppHandler.isInTelegram()) {
-        window.TelegramWebAppHandler.showBackButton(() => {
+    // Показываем кнопку "Назад" в Telegram Web App для закрытия модального окна
+    if (window.Telegram && Telegram.WebApp) {
+        Telegram.WebApp.BackButton.show();
+        Telegram.WebApp.BackButton.onClick(() => {
             closeModal(modal);
         });
     }
@@ -449,8 +438,11 @@ function openModal(modal) {
 
 // Функция закрытия модального окна
 function closeModal(modal) {
-    if (window.TelegramWebAppHandler && window.TelegramWebAppHandler.isInTelegram()) {
-        window.TelegramWebAppHandler.hideBackButton();
+    if (window.Telegram && Telegram.WebApp) {
+        Telegram.WebApp.BackButton.hide();
+        Telegram.WebApp.BackButton.offClick(() => {
+            closeModal(modal);
+        });
     }
     
     modal.classList.remove('active');
@@ -555,7 +547,7 @@ function showMyFightsModal() {
             }
             
             fightsHTML += `
-                <div class="fight-item" style="animation-delay: ${index * 0.1}s">
+                <div class="fight-item">
                     <h3>Против: ${fight.opponent}</h3>
                     <div class="fight-details">
                         <i class="far fa-calendar"></i>
@@ -918,18 +910,10 @@ function showFilterModal() {
     });
 }
 
+// ИСПРАВЛЕННАЯ ФУНКЦИЯ ПРИМЕНЕНИЯ ФИЛЬТРОВ (без дёрганий)
 function applyFiltersToFighters() {
     const fighters = document.querySelectorAll('.fighter-card');
     
-    // Сначала скрываем всех
-    fighters.forEach(fighter => {
-        fighter.style.display = 'none';
-        fighter.style.opacity = '0';
-        fighter.style.transform = 'translateY(15px)';
-    });
-    
-    // Затем показываем подходящих с анимацией
-    let delay = 0;
     fighters.forEach(fighter => {
         const fighterWeight = fighter.dataset.weight;
         const fighterSport = fighter.dataset.sport;
@@ -938,14 +922,9 @@ function applyFiltersToFighters() {
         let sportMatch = activeFilters.sport.length === 0 || activeFilters.sport.includes(fighterSport);
         
         if (weightMatch && sportMatch) {
-            setTimeout(() => {
-                fighter.style.display = 'flex';
-                setTimeout(() => {
-                    fighter.style.opacity = '1';
-                    fighter.style.transform = 'translateY(0)';
-                }, 10);
-            }, delay);
-            delay += 50; // Задержка между появлением карточек
+            fighter.style.display = 'flex';
+        } else {
+            fighter.style.display = 'none';
         }
     });
 }
@@ -995,8 +974,8 @@ function switchPage(page) {
     }
     
     // Скрываем кнопку "Назад" при переключении страниц
-    if (window.TelegramWebAppHandler && window.TelegramWebAppHandler.isInTelegram() && currentModal) {
-        window.TelegramWebAppHandler.hideBackButton();
+    if (window.Telegram && Telegram.WebApp && currentModal) {
+        Telegram.WebApp.BackButton.hide();
         if (currentModal.parentNode) {
             currentModal.parentNode.removeChild(currentModal);
             currentModal = null;
